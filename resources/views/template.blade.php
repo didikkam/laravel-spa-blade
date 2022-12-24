@@ -31,10 +31,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#home">Home</a>
+                        <a class="nav-link active" aria-current="/page" href="home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="/about">About</a>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -57,12 +57,14 @@
     <link type="text/css" rel="stylesheet" href="https://www.cahayaagro.com/vendor/nprogress-0.2.0/nprogress.css">
     <script type="text/javascript" src="https://www.cahayaagro.com/vendor/nprogress-0.2.0//nprogress.js"></script>
     <script>
-        $(document).on('click', 'a.target-link', function(e) {
-            e.preventDefault();
-            var item = $(this);
-            var target_url = item.attr('href').replace('#', '');
-            location.hash = target_url;
-            // loadURI(target_url);
+        $(document).ready(function() {
+            var original_title = window.location.pathname;
+            var target_url = window.location.pathname;
+            if (target_url == '' || target_url == '/' || target_url == 'undefined') {
+                loadURI('home');
+            } else {
+                loadURI(target_url);
+            }
         });
 
         // User's mouse is inside the page.
@@ -75,20 +77,32 @@
             window.innerDocClick = false;
         }
 
-        window.onhashchange = function() {
-            // if (window.innerDocClick) {
-            //Your own in-page mechanism triggered the hash change
-            // } else {
-            //Browser back button was clicked
-            var original_title = location.hash;
-            var target_url = original_title.replace('#', '');
-            if (target_url == '' || target_url == '/' || target_url == 'undefined') {
-                loadURI('home');
-            } else {
-                loadURI(target_url);
-            }
-            // }
-        }
+        // window.onhashchange = function() {
+        //     // if (window.innerDocClick) {
+        //     //Your own in-page mechanism triggered the hash change
+        //     // } else {
+        //     //Browser back button was clicked
+        //     var original_title = location.hash;
+        //     var target_url = original_title.replace('#', '');
+        //     if (target_url == '' || target_url == '/' || target_url == 'undefined') {
+        //         loadURI('home');
+        //     } else {
+        //         loadURI(target_url);
+        //     }
+        //     // }
+        // }
+
+        window.addEventListener('popstate', function(event) {
+            // Log the state data to the console
+            // event.preventDefault();
+            // console.log(window.location.pathname);
+        });
+
+        $("a").on('click', function(e) {
+            e.preventDefault();
+            var href = $(this).attr('href');
+            loadURI(href);
+        });
 
         function hideBack() {
             $('.navbar-menu').show();
@@ -136,10 +150,10 @@
             NProgress.start();
             $.ajax({
                 type: 'GET',
-                url: base_url + target_url,
+                url: base_url + 'page' + target_url,
                 contentType: false,
                 success: function(data) {
-                    location.hash = history;
+                    window.history.pushState('', '', target_url);
                     $("#" + content).html(data);
                     NProgress.done();
                     // loadingContent(content);

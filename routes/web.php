@@ -15,8 +15,9 @@
 //     return view('template');
 // });
 
-
-Route::get('/home', 'HelloControllers@home')->name('home');
-Route::get('/about', 'HelloControllers@about')->name('about');
+Route::group(['prefix'=>'page','as'=>'page.'], function(){
+    Route::get('/home', 'HelloControllers@home')->name('home');
+    Route::get('/about', 'HelloControllers@about')->name('about');
+});
 
 Route::view('/{path?}', 'template');
